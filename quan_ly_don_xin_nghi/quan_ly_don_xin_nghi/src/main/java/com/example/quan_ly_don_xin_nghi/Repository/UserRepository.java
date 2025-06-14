@@ -1,4 +1,4 @@
-package Repository;
+package com.example.quan_ly_don_xin_nghi.Repository;
 
 import java.util.List;
 import java.util.Optional;
@@ -6,7 +6,7 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import Entity.User;
+import com.example.quan_ly_don_xin_nghi.Entity.User;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {

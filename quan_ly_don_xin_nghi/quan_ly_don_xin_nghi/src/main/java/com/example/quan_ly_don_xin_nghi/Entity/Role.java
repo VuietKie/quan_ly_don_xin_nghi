@@ -1,4 +1,4 @@
-package Entity;
+package com.example.quan_ly_don_xin_nghi.Entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -27,4 +27,30 @@ public class Role {
     private String role_name;
 
     private String description;
+
+    // Getters
+    public Long getRole_id() {
+        return role_id;
+    }
+
+    public String getRole_name() {
+        return role_name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    // Setters
+    public void setRole_id(Long role_id) {
+        this.role_id = role_id;
+    }
+
+    public void setRole_name(String role_name) {
+        this.role_name = role_name;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
 } 

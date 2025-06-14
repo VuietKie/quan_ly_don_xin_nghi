@@ -1,4 +1,4 @@
-package Entity;
+package com.example.quan_ly_don_xin_nghi.Entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -51,5 +51,69 @@ public class User {
     @JoinColumn(name = "role_id")
     private Role role;
 
-    // Getters, Setters
-}
+    // Getters
+    public Long getUser_id() {
+        return user_id;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public String getFull_name() {
+        return full_name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public Department getDepartment() {
+        return department;
+    }
+
+    public User getManager() {
+        return manager;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    // Setters
+    public void setUser_id(Long user_id) {
+        this.user_id = user_id;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public void setFull_name(String full_name) {
+        this.full_name = full_name;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setDepartment(Department department) {
+        this.department = department;
+    }
+
+    public void setManager(User manager) {
+        this.manager = manager;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
+} 

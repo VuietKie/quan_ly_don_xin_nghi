@@ -1,4 +1,4 @@
-package Entity;
+package com.example.quan_ly_don_xin_nghi.Entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -32,5 +32,29 @@ public class Department {
     @JoinColumn(name = "id_manager")
     private User manager;
 
-    // Getters, Setters
-}
+    // Getters
+    public Long getDepartment_id() {
+        return department_id;
+    }
+
+    public String getDepartment_name() {
+        return department_name;
+    }
+
+    public User getManager() {
+        return manager;
+    }
+
+    // Setters
+    public void setDepartment_id(Long department_id) {
+        this.department_id = department_id;
+    }
+
+    public void setDepartment_name(String department_name) {
+        this.department_name = department_name;
+    }
+
+    public void setManager(User manager) {
+        this.manager = manager;
+    }
+} 

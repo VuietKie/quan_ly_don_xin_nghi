@@ -15,7 +15,7 @@ public class CorsConfig {
         CorsConfiguration config = new CorsConfiguration();
         
         // Cho phép frontend truy cập
-        config.addAllowedOrigin("http://localhost:3000");
+        config.addAllowedOrigin("http://localhost:8090");
         
         // Cho phép các phương thức HTTP
         config.addAllowedMethod("*");

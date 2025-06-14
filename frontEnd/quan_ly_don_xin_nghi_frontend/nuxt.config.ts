@@ -4,7 +4,16 @@ import tailwindcss from '@tailwindcss/vite'
 export default defineNuxtConfig({
   compatibilityDate: '2025-05-15',
   devtools: { enabled: true },
+  devServer: {
+    port: 8090
+  },
   css: ['~/assets/css/tailwind.css'],
+
+  runtimeConfig: {
+    public: {
+      apiBase: process.env.API_BASE || 'http://localhost:8080/api'
+    }
+  },
 
   vite: {
     plugins: [

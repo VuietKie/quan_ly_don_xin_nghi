@@ -1,4 +1,4 @@
-package Entity;
+package com.example.quan_ly_don_xin_nghi.Entity;
 
 import java.time.LocalDateTime;
 import java.util.Date;
@@ -70,5 +70,85 @@ public class LeaveRequest {
         updated_at = LocalDateTime.now();
     }
 
-    // Getters, Setters
-}
+    // Getters
+    public Long getRequest_id() {
+        return request_id;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public Date getStart_date() {
+        return start_date;
+    }
+
+    public Date getEnd_date() {
+        return end_date;
+    }
+
+    public String getReason() {
+        return reason;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public User getProcessedBy() {
+        return processedBy;
+    }
+
+    public String getProcessed_reason() {
+        return processed_reason;
+    }
+
+    public LocalDateTime getCreated_at() {
+        return created_at;
+    }
+
+    public LocalDateTime getUpdated_at() {
+        return updated_at;
+    }
+
+    // Setters
+    public void setRequest_id(Long request_id) {
+        this.request_id = request_id;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public void setStart_date(Date start_date) {
+        this.start_date = start_date;
+    }
+
+    public void setEnd_date(Date end_date) {
+        this.end_date = end_date;
+    }
+
+    public void setReason(String reason) {
+        this.reason = reason;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public void setProcessedBy(User processedBy) {
+        this.processedBy = processedBy;
+    }
+
+    public void setProcessed_reason(String processed_reason) {
+        this.processed_reason = processed_reason;
+    }
+
+    public void setCreated_at(LocalDateTime created_at) {
+        this.created_at = created_at;
+    }
+
+    public void setUpdated_at(LocalDateTime updated_at) {
+        this.updated_at = updated_at;
+    }
+} 
