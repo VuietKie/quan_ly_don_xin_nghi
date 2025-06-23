@@ -16,16 +16,16 @@
           </tr>
         </thead>
         <tbody class="bg-white divide-y divide-gray-200">
-          <tr v-for="user in users" :key="user.id" class="hover:bg-gray-50">
-            <td class="px-6 py-4 whitespace-nowrap">{{ user.id }}</td>
+          <tr v-for="user in users" :key="user.userId" class="hover:bg-gray-50">
+            <td class="px-6 py-4 whitespace-nowrap">{{ user.userId }}</td>
             <td class="px-6 py-4 whitespace-nowrap">{{ user.username }}</td>
-            <td class="px-6 py-4 whitespace-nowrap">{{ user.full_name }}</td>
+            <td class="px-6 py-4 whitespace-nowrap">{{ user.fullName }}</td>
             <td class="px-6 py-4 whitespace-nowrap">{{ user.email }}</td>
-            <td class="px-6 py-4 whitespace-nowrap">{{ user.department }}</td>
-            <td class="px-6 py-4 whitespace-nowrap">{{ user.role }}</td>
+            <td class="px-6 py-4 whitespace-nowrap">{{ user.department.departmentName }}</td>
+            <td class="px-6 py-4 whitespace-nowrap">{{ user.role.roleName }}</td>
             <td class="px-6 py-4 whitespace-nowrap">
               <button @click="editUser(user)" class="text-indigo-600 hover:text-indigo-900 mr-2">Sửa</button>
-              <button @click="deleteUser(user.id)" class="text-red-600 hover:text-red-900">Xóa</button>
+              <button @click="deleteUser(user.userId)" class="text-red-600 hover:text-red-900">Xóa</button>
             </td>
           </tr>
         </tbody>
@@ -37,20 +37,32 @@
 <script lang="ts" setup>
 import { ref, onMounted } from 'vue'
 
+interface Department {
+  departmentId: number
+  departmentName: string
+  idManager: number
+}
+
+interface Role {
+  roleId: number
+  roleName: string
+}
+
 interface User {
-  id: number
+  userId: number
   username: string
-  full_name: string
+  password: string
+  fullName: string
+  department: Department
+  role: Role
   email: string
-  department: string
-  role: string
 }
 
 const users = ref<User[]>([])
 
 const fetchUsers = async () => {
   try {
-    const response = await fetch('http://localhost:8080/api/users')
+    const response = await fetch('http://localhost:8080/api/list/user')
     if (!response.ok) {
       throw new Error('Network response was not ok')
     }
@@ -74,7 +86,7 @@ const deleteUser = async (id: number) => {
       if (!response.ok) {
         throw new Error('Network response was not ok')
       }
-      users.value = users.value.filter(user => user.id !== id)
+      users.value = users.value.filter(user => user.userId !== id)
     } catch (error) {
       console.error('Error deleting user:', error)
     }

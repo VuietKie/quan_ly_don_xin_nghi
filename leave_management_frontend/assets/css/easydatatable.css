@@ -1,0 +1,18 @@
+/* Chỉnh border của các ô tiêu đề (th) */
+.vue3-easy-data-table__header th {
+  border: 1px solid #000000 !important; /* Đặt độ dày viền của tiêu đề */
+}
+
+/* Chỉnh border của các ô nội dung (td) */
+.vue3-easy-data-table__body td {
+  border: 1px solid #000000 !important; /* Đặt độ dày viền của ô nội dung */
+}
+
+.vue3-easy-data-table__header th {
+  font-size: 15px; /* Tăng kích thước chữ của tiêu đề */
+  font-weight: bold;
+}
+
+.vue3-easy-data-table__body td {
+  font-size: 13px; /* Tăng kích thước chữ của nội dung */
+}

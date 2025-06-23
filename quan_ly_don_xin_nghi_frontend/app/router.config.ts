@@ -19,11 +19,11 @@ export default <RouterConfig>{
         //     component: () => import('~/pages/auth/Profile.vue'),
         // },
         // Quản lý nhân viên
-        // {
-        //     name: 'employees',
-        //     path: '/employees',
-        //     component: () => import('~/pages/Employees/List.vue'),
-        // },
+        {
+            name: 'employees',
+            path: '/employees',
+            component: () => import('~/pages/Employees/List.vue'),
+        },
         // {
         //     name: 'employees-create',
         //     path: '/employees/create',
