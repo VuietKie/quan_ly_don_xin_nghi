@@ -7,6 +7,8 @@ interface User {
   first_name: string;
   last_name: string;
   email: string;
+  role?: string;
+  features?: string[];
 }
 
 export const useAuthStore = defineStore("auth", () => {
@@ -21,7 +23,7 @@ export const useAuthStore = defineStore("auth", () => {
 
   const login = async (username: string, password: string) => {
     try {
-      const data = await $fetch<{ access: string; refresh: string }>(
+      const data = await $fetch<{ access: string; refresh: string; role: string }>(
         `${config.public.apiBase}/users/login/`,
         {
           method: "POST",
@@ -33,12 +35,21 @@ export const useAuthStore = defineStore("auth", () => {
         throw new Error("Invalid response from server");
       }
 
-      // ✅ Lưu token vào cookies
       accessToken.value = data.access;
       refreshToken.value = data.refresh;
 
-      // ✅ Lấy thông tin user
+      // Gọi API lấy feature
+      const features = await $fetch<string[]>(
+        `${config.public.apiBase}/auth/features?role=${data.role}`
+      );
+
+      // Lấy thông tin user như cũ
       await fetchUser();
+      // Sau khi fetchUser, cập nhật role và features vào user đã có đủ thông tin
+      if (user.value) {
+        user.value.role = data.role;
+        user.value.features = features;
+      }
     } catch (err) {
       console.error("Login failed:", err);
       throw new Error("Đăng nhập thất bại");

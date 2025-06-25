@@ -37,7 +37,7 @@ interface User {
 }
 
 const fetchUsers = async (): Promise<User[]> => {
-  const response = await fetch(`${config.public.apiBase}/list/user`);
+  const response = await fetch(`${config.public.apiBase}/auth/user`);
   if (!response.ok) throw new Error("Không thể lấy danh sách người dùng");
   return await response.json();
 };
@@ -45,7 +45,7 @@ const fetchUsers = async (): Promise<User[]> => {
 const handleLogin = async (form: { username: string; password: string }) => {
   loading.value = true;
   try {
-    const response = await fetch(`${config.public.apiBase}/list/login`, {
+    const response = await fetch(`${config.public.apiBase}/auth/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -76,7 +76,7 @@ const handleLogin = async (form: { username: string; password: string }) => {
 
 const fetchAndStoreUserInfo = async (username: string) => {
   try {
-    const response = await fetch(`${config.public.apiBase}/list/user`);
+    const response = await fetch(`${config.public.apiBase}/auth/user`);
     if (!response.ok) throw new Error("Không thể lấy danh sách người dùng");
     const users = await response.json();
     const user = users.find((u: User) => u.username === username);
