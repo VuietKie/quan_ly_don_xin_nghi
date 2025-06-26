@@ -5,7 +5,9 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -53,7 +55,19 @@ public class UserController {
             Users user = userOpt.get();
             String role = user.getRole().getRoleName();
             String token = jwtUtil.generateToken(user.getUsername(), role);
-            return ResponseEntity.ok(new LoginResponse(token, role, user.getUsername()));
+
+            // Tạo cookie chứa token
+            ResponseCookie cookie = ResponseCookie.from("token", token)
+                .httpOnly(false) // Để true nếu muốn bảo mật, false để JS đọc được
+                .secure(false)   // Để true nếu dùng HTTPS
+                .path("/")
+                .maxAge(10 * 60 * 60) // 10 giờ
+                .sameSite("Lax")
+                .build();
+
+            return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, cookie.toString())
+                .body(new LoginResponse(token, role, user.getUsername()));
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
         }

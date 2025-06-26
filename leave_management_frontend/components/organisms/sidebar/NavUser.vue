@@ -12,8 +12,8 @@
               <AvatarFallback class="rounded-lg">CN</AvatarFallback>
             </Avatar>
             <div class="grid flex-1 text-left text-sm leading-tight">
-              <span class="truncate font-medium">{{ fullName }}</span>
-              <span class="truncate text-xs text-muted-foreground">Admin</span>
+              <span class="truncate font-medium">{{ displayName }}</span>
+              <span class="truncate text-xs text-muted-foreground">{{ roleLabel }}</span>
             </div>
             <ChevronsUpDown class="ml-auto size-4" />
           </SidebarMenuButton>
@@ -32,8 +32,8 @@
                 <AvatarFallback class="rounded-lg">CN</AvatarFallback>
               </Avatar>
               <div class="grid flex-1 text-left text-sm leading-tight">
-                <span class="truncate font-semibold">{{ fullName }}</span>
-                <span class="truncate text-xs text-muted-foreground">Admin</span>
+                <span class="truncate font-semibold">{{ displayName }}</span>
+                <span class="truncate text-xs text-muted-foreground">{{ roleLabel }}</span>
               </div>
             </div>
           </DropdownMenuLabel>
@@ -94,11 +94,8 @@ import { useAuthStore } from '@/stores/auth';
 const authStore = useAuthStore();
 const props = defineProps<{
   user: {
-    id: number;
-    username: string;
-    first_name: string;
-    last_name: string;
-    email: string;
+    fullName?: string;
+    role: string;
   }
 }>()
 
@@ -110,8 +107,15 @@ const logout = () => {
   authStore.logout();
 };
 
-// 👇 computed fullName từ first_name + last_name
-const fullName = computed(() => {
-  return `${props.user.first_name} ${props.user.last_name}`.trim();
+// 👇 computed hiển thị roleID
+const roleLabel = computed(() => {
+  return props.user.role ? `Role: ${props.user.role}` : '';
 });
+
+const displayName = computed(() => {
+  return props.user.fullName && props.user.fullName.trim() !== '' ? props.user.fullName : 'Tài khoản';
+});
+
+// expose to template
+defineExpose({ roleLabel, displayName });
 </script>

@@ -64,6 +64,9 @@ const token = useCookie('access_token');
 const user = ref<any>(null);
 const roleID = ref<number|null>(null);
 
+const userName = useCookie('user_name');
+const roleCookie = useCookie('role');
+
 function parseJwt (token: string) {
   try {
     return JSON.parse(atob(token.split('.')[1]));
@@ -73,22 +76,28 @@ function parseJwt (token: string) {
 }
 
 onMounted(() => {
-  if (token.value) {
+  // Ưu tiên lấy từ cookies nếu có
+  if (roleCookie.value) {
+    user.value = {
+      fullName: userName.value || '',
+      role: roleCookie.value
+    };
+  } else if (token.value) {
     const payload = parseJwt(token.value);
     if (payload) {
-      user.value = { username: payload.sub, role: payload.role, roleID: payload.roleId || payload.roleID || payload.role_id };
-      roleID.value = payload.roleId || payload.roleID || payload.role_id || null;
+      user.value = { fullName: payload.sub || '', role: payload.role || '' };
     }
   }
 });
 
 const navMain = computed(() => {
-  if (!roleID.value) return [];
-  if (roleID.value === 1) {
+  if (!user.value || !user.value.role) return [];
+  const roleId = Number(user.value.role);
+  if (roleId === 1) {
     return [menuByFeature[0]];
-  } else if ([2,3,4].includes(roleID.value)) {
-    return menuByFeature.slice(0,3);
-  } else if (roleID.value === 5) {
+  } else if ([2, 3, 4].includes(roleId)) {
+    return menuByFeature.slice(0, 3);
+  } else if (roleId === 5) {
     return menuByFeature;
   }
   return [];
