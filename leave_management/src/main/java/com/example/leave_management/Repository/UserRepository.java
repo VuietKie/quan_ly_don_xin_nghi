@@ -7,4 +7,5 @@ import com.example.leave_management.Entity.Users;
 
 @Repository
 public interface UserRepository extends JpaRepository<Users, Long> {
+    java.util.List<Users> findByManager_UserId(Long managerId);
 } 
