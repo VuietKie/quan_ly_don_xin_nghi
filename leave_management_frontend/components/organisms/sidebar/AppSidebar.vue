@@ -26,6 +26,7 @@ import {
 import Logo from '~/components/organisms/sidebar/Logo.vue'
 import NavMain from '~/components/organisms/sidebar/NavMain.vue'
 import NavUser from '~/components/organisms/sidebar/NavUser.vue'
+import { useAuthStore } from '@/stores/auth';
 
 const props = withDefaults(defineProps<SidebarProps>(), {
   collapsible: 'icon',
@@ -60,51 +61,111 @@ const menuByFeature = [
 ];
 
 const config = useRuntimeConfig();
-const token = useCookie('access_token');
+const token = useCookie('access_token', { sameSite: 'lax', path: '/' });
 const user = ref<any>(null);
 const roleID = ref<number|null>(null);
-
-const userName = useCookie('user_name');
-const roleCookie = useCookie('role');
+const authStore = useAuthStore();
 
 function parseJwt (token: string) {
   try {
-    return JSON.parse(atob(token.split('.')[1]));
+    const decoded = JSON.parse(atob(token.split('.')[1]));
+    console.log('🔍 Parsed JWT payload:', decoded);
+    return decoded;
   } catch (e) {
+    console.error('❌ Error parsing JWT:', e);
     return null;
   }
 }
 
 onMounted(() => {
-  // Ưu tiên lấy từ cookies nếu có
-  if (roleCookie.value) {
-    user.value = {
-      fullName: userName.value || '',
-      role: roleCookie.value
-    };
-  } else if (token.value) {
+  console.log('🚀 AppSidebar mounted');
+  console.log('🍪 Token from cookie:', token.value);
+  
+  if (token.value) {
     const payload = parseJwt(token.value);
+    console.log('📦 JWT payload:', payload);
+    
     if (payload) {
-      user.value = { fullName: payload.sub || '', role: payload.role || '' };
+      // Map string roles to numeric roleIDs
+      const roleMapping: { [key: string]: number } = {
+        'Employee': 1,
+        'Team Leader': 2,
+        'Department Manager': 3,
+        'Vice Director': 4,
+        'Director': 5
+      };
+      
+      const roleString = payload.role || payload.roleId || payload.roleID || payload.role_id;
+      console.log('🎭 Role string from JWT:', roleString);
+      
+      roleID.value = roleMapping[roleString] || null;
+      console.log('🎭 Mapped roleID:', roleID.value);
+      console.log('🔍 Available payload keys:', Object.keys(payload));
+      
+      user.value = { fullName: payload.sub || '', roleID: roleID.value };
+      console.log('👤 User object:', user.value);
+    } else {
+      console.warn('⚠️ Could not parse JWT payload');
     }
+  } else {
+    console.warn('⚠️ No token found in cookies');
   }
 });
 
 const navMain = computed(() => {
-  if (!user.value || !user.value.role) return [];
-  const roleId = Number(user.value.role);
-  if (roleId === 1) {
+  console.log('🔄 Computing navMain, roleID:', roleID.value);
+  
+  if (!roleID.value) {
+    console.log('❌ No roleID, returning empty array');
+    return [];
+  }
+  
+  if (roleID.value === 1) {
+    console.log('✅ Role 1 - Employee, showing:', menuByFeature[0]);
     return [menuByFeature[0]];
-  } else if ([2, 3, 4].includes(roleId)) {
+  } else if ([2, 3, 4].includes(roleID.value)) {
+    console.log('✅ Role 2,3,4 - Manager/Lead, showing:', menuByFeature.slice(0, 3));
     return menuByFeature.slice(0, 3);
-  } else if (roleId === 5) {
+  } else if (roleID.value === 5) {
+    console.log('✅ Role 5 - Admin, showing all features:', menuByFeature);
     return menuByFeature;
   }
+  
+  console.log('❌ Unknown roleID:', roleID.value);
   return [];
 });
 
-const logout = () => {
-  token.value = null;
-  navigateTo("/login");
+const logout = async () => {
+  try {
+    console.log('🚪 Logging out user...');
+    
+    // Use authStore logout for consistency
+    authStore.logout();
+    
+    // Clear local state
+    user.value = null;
+    roleID.value = null;
+    
+    // Clear other auth-related cookies if they exist
+    const refreshToken = useCookie('refresh_token');
+    const userData = useCookie('user_data');
+    
+    if (refreshToken.value) {
+      refreshToken.value = null;
+    }
+    if (userData.value) {
+      userData.value = null;
+    }
+    
+    console.log('✅ Logout successful, redirecting to login...');
+    
+    // Redirect to login page
+    await navigateTo('/login', { replace: true });
+    
+  } catch (error) {
+    console.error('❌ Error during logout:', error);
+    // Even if there's an error, still try to redirect to login
+    await navigateTo('/login', { replace: true });
+  }
 };
 </script>

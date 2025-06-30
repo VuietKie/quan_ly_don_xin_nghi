@@ -4,6 +4,7 @@
 
 <script lang="ts" setup>
 import { useRouter } from "vue-router";
+import { useAuthStore } from "@/stores/auth"; // Import auth store
 import { useToast } from "vue-toastification";
 import LoginForm from '~/components/organisms/auth/LoginForm.vue'
 import { useCookie } from '#app';
@@ -12,7 +13,7 @@ const loading = ref(false);
 
 const router = useRouter();
 const toast = useToast();
-const config = useRuntimeConfig(); // <-- thêm dòng này
+const config = useRuntimeConfig(); 
 
 interface Department {
   departmentId: number;
@@ -35,54 +36,61 @@ interface User {
   email: string;
 }
 
-const handleLogin = async (form: { username: string; password: string }) => {
+const handleLogin = async ({ username, password }: { username: string; password: string }) => {
   loading.value = true;
   try {
-    const response = await fetch(`${config.public.apiBase}/auth/login`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(form),
+    // 1. Kiểm tra username, password bằng phương thức GET
+    const userRes = await $fetch<User>(`${config.public.apiBase}/auth/user`, {
+      method: "GET",
+      params: { username, password },
     });
 
-    if (!response.ok) {
-      throw new Error("Đăng nhập thất bại! Hãy kiểm tra lại tài khoản và mật khẩu.");
+    if (!userRes) {
+      toast.error("Tên đăng nhập hoặc mật khẩu không đúng.");
+      loading.value = false;
+      return;
     }
 
-    const data = await response.json();
-    // Lưu token, tên và Role vào cookies
-    const token = useCookie('access_token', { maxAge: 60 * 60 * 24 * 7, sameSite: 'lax', path: '/' }); // 7 ngày, toàn site
-    token.value = data.token;
-    const userName = useCookie('user_name');
-    userName.value = data.fullName || data.username || '';
-    const role = useCookie('role');
-    role.value = data.Role || '';
+    // 2. Gọi API login để lấy token, username, Role
+    const loginRes = await $fetch<{ token: string; username: string; role: string }>(
+      `${config.public.apiBase}/auth/login`,
+      {
+        method: "POST",
+        body: { username, password },
+      }
+    );
 
-    // Gọi hàm lấy thông tin user chi tiết
-    await fetchAndStoreUserInfo(data.username);
+    if (!loginRes || !loginRes.token) {
+      toast.error("Đăng nhập thất bại. Không nhận được token.");
+      loading.value = false;
+      return;
+    }
+
+    // Lưu token vào cookie
+    const accessToken = useCookie<string | null>("access_token", {
+      maxAge: 60 * 60 * 24 * 7, // 7 ngày
+      sameSite: 'lax',
+      path: '/',
+      secure: process.client && location.protocol === 'https:',
+    });
+    accessToken.value = loginRes.token;
+
+    // Lưu thông tin user vào store nếu muốn (nếu có useAuthStore)
+    const authStore = useAuthStore();
+    authStore.setUser(userRes);
+    authStore.setRoles([loginRes.role]);
 
     toast.success("Đăng nhập thành công!");
-    router.push("/");
-  } catch (error) {
-    console.error("Lỗi đăng nhập:", error);
-    toast.error("Đăng nhập thất bại! Hãy kiểm tra lại tài khoản và mật khẩu.");
+    router.push({ path: "/" });
+  } catch (err: any) {
+    toast.error("Đăng nhập thất bại. " + (err?.message || ""));
   } finally {
     loading.value = false;
   }
 };
 
-const fetchAndStoreUserInfo = async (username: string) => {
-  try {
-    const response = await fetch(`${config.public.apiBase}/auth/user`);
-    if (!response.ok) throw new Error("Không thể lấy danh sách người dùng");
-    const users = await response.json();
-    const user = users.find((u: User) => u.username === username);
-    if (user) {
-      localStorage.setItem("user", JSON.stringify(user));
-    }
-  } catch (error) {
-    console.error("Lỗi lấy thông tin user:", error);
-  }
-};
 </script>
+
+<style>
+
+</style>

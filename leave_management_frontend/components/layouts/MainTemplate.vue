@@ -55,7 +55,6 @@ import { useRoute } from 'vue-router'
 
 const route = useRoute()
 
-// const autoCloseRoutes = ['/da/list', '/user-management', '/ld-management/dat-dai', '/ld-management/quy-hoach', '/ld-management/xay-dung', '/data-visualization']
-
 // const defaultOpen = computed(() => !autoCloseRoutes.includes(route.path))
+
 </script>

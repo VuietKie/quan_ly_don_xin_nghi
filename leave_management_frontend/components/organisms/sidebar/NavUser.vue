@@ -101,10 +101,13 @@ const props = defineProps<{
 
 const { isMobile } = useSidebar()
 
+const emit = defineEmits(['logout']);
+
 // Logout Function
 const logout = () => {
-  console.log('Logout clicked');
-  authStore.logout();
+  console.log('Logout clicked from NavUser');
+  // Emit logout event to parent component
+  emit('logout');
 };
 
 // 👇 computed hiển thị roleID
