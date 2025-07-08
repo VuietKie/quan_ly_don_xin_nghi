@@ -6,6 +6,8 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -38,6 +40,12 @@ public class LeaveRequestController {
         public String reason;
         public String status;
         public Long processedById;
+        public String processedReason;
+    }
+
+    public static class ApproveRequestDTO {
+        public Long processedById;
+        public String status; // 'Approved' hoặc 'Rejected'
         public String processedReason;
     }
 
@@ -103,5 +111,30 @@ public class LeaveRequestController {
             .filter(lr -> lr.getUser() != null && lr.getUser().getUserId().equals(userId))
             .toList();
         return ResponseEntity.ok(myRequests);
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<?> approveOrRejectRequest(@PathVariable Long id, @RequestBody ApproveRequestDTO dto) {
+        java.util.Optional<Leave_Requests> leaveOpt = leaveRequestsRepository.findById(id);
+        if (leaveOpt.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        Leave_Requests leaveRequest = leaveOpt.get();
+        if (dto.processedById != null) {
+            java.util.Optional<Users> processedByOpt = userRepository.findById(dto.processedById);
+            if (processedByOpt.isEmpty()) {
+                return ResponseEntity.badRequest().body("Processed by user not found");
+            }
+            leaveRequest.setProcessedBy(processedByOpt.get());
+        }
+        if (dto.status != null) {
+            leaveRequest.setStatus(dto.status);
+        }
+        if (dto.processedReason != null) {
+            leaveRequest.setProcessedReason(dto.processedReason);
+        }
+        leaveRequest.setUpdatedAt(new java.util.Date());
+        Leave_Requests saved = leaveRequestsRepository.save(leaveRequest);
+        return ResponseEntity.ok(saved);
     }
 }
