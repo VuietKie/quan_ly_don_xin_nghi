@@ -54,7 +54,7 @@ public class UserController {
         if (userOpt.isPresent()) {
             Users user = userOpt.get();
             String role = user.getRole().getRoleName();
-            String token = jwtUtil.generateToken(user.getUsername(), role);
+            String token = jwtUtil.generateToken(user.getUsername(), role, String.valueOf(user.getUserId()));
 
             // Tạo cookie chứa token
             ResponseCookie cookie = ResponseCookie.from("token", token)

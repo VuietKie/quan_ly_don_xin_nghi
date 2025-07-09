@@ -8,11 +8,11 @@
           </BreadcrumbItem>
           <BreadcrumbSeparator class="hidden md:block" />
           <BreadcrumbItem class="hidden md:block">
-            <BreadcrumbLink href="/leave-request/list">Quản lý đơn xin nghỉ</BreadcrumbLink>
+            <BreadcrumbLink href="/leave-request/my-request">Đơn xin nghỉ của tôi</BreadcrumbLink>
           </BreadcrumbItem>
           <BreadcrumbSeparator class="hidden md:block" />
           <BreadcrumbItem>
-            <BreadcrumbPage>Danh sách đơn xin nghỉ</BreadcrumbPage>
+            <BreadcrumbPage>Đơn xin nghỉ của tôi</BreadcrumbPage>
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
@@ -22,7 +22,7 @@
         v-if="apiUrl"
         :apiUrl="apiUrl"
         :headers="headers"
-        title="Danh sách đơn xin nghỉ"
+        title="Đơn xin nghỉ của tôi"
       >
         <template #actions="{ id }">
           <NuxtLink :to="`/leave-request/${id}`">
@@ -76,13 +76,13 @@ onMounted(() => {
 
 const apiUrl = computed(() =>
   userId.value
-    ? `${config.public.apiBase}/leave-request/list?userId=${userId.value}`
+    ? `${config.public.apiBase}/leave-request/my-request?userId=${userId.value}`
     : ''
 )
 
 watch(userId, () => {
-  console.log('[LeaveRequestList] userId:', userId.value)
-  console.log('[LeaveRequestList] apiUrl:', apiUrl.value)
+  console.log('[MyRequest] userId:', userId.value)
+  console.log('[MyRequest] apiUrl:', apiUrl.value)
 })
 
 const headers = [
@@ -94,7 +94,4 @@ const headers = [
   { text: 'Trạng thái', value: 'status' },
   { text: 'Actions', value: 'actions', sortable: false },
 ]
-</script>
-
-<style>
-</style>
+</script> 

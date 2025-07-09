@@ -8,7 +8,7 @@
           </BreadcrumbItem>
           <BreadcrumbSeparator class="hidden md:block" />
           <BreadcrumbItem class="hidden md:block">
-            <BreadcrumbLink href="/LeaveRequest/List">Quản lý đơn xin nghỉ</BreadcrumbLink>
+            <BreadcrumbLink href="/leave-request/list">Quản lý đơn xin nghỉ</BreadcrumbLink>
           </BreadcrumbItem>
           <BreadcrumbSeparator class="hidden md:block" />
           <BreadcrumbItem>
@@ -47,12 +47,13 @@ const handleCreateLeaveRequest = async (formData: any) => {
     const response = await $fetch(`${config.public.apiBase}/leave-request/create`, {
       method: "POST",
       headers: {
+        'Content-Type': 'application/json',
         Authorization: `Bearer ${token.value}`,
       },
       body: formData,
     });
     toast.success("Đơn xin nghỉ đã được tạo thành công!");
-    router.push("/LeaveRequest/List");
+    router.push("/leave-request/my-request");
   } catch (error) {
     console.error("Lỗi khi tạo đơn xin nghỉ:", error);
     toast.error("Không thể tạo đơn xin nghỉ. Vui lòng kiểm tra lại thông tin.");

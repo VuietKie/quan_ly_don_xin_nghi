@@ -39,19 +39,19 @@ const menuByFeature = [
     url: '/leave-request/create',
   },
   {
+    key: 'show_my_leave_request',
+    title: 'Show My Leave Request',
+    url: '/leave-request/my-request',
+  },
+  {
     key: 'process_leave_request',
     title: 'Process Leave Request',
     url: '/leave-request/process',
   },
   {
-    key: 'view_department_agenda',
-    title: 'View Department Agenda',
-    url: '/agenda/department',
-  },
-  {
-    key: 'view_company_agenda',
-    title: 'View Company Agenda',
-    url: '/agenda/company',
+    key: 'view_agenda',
+    title: 'View Agenda',
+    url: '/agenda',
   },
   {
     key: 'manage_permissions',
@@ -89,10 +89,10 @@ onMounted(() => {
       // Map string roles to numeric roleIDs
       const roleMapping: { [key: string]: number } = {
         'Employee': 1,
-        'Team Leader': 2,
+        'Manager': 2,
         'Department Manager': 3,
-        'Vice Director': 4,
-        'Director': 5
+        'Director': 4,
+        'admin': 5
       };
       
       const roleString = payload.role || payload.roleId || payload.roleID || payload.role_id;
@@ -121,11 +121,11 @@ const navMain = computed(() => {
   }
   
   if (roleID.value === 1) {
-    console.log('✅ Role 1 - Employee, showing:', menuByFeature[0]);
-    return [menuByFeature[0]];
+    console.log('✅ Role 1 - Employee, showing:', menuByFeature.slice(0, 1));
+    return menuByFeature.slice(0, 2);
   } else if ([2, 3, 4].includes(roleID.value)) {
-    console.log('✅ Role 2,3,4 - Manager/Lead, showing:', menuByFeature.slice(0, 3));
-    return menuByFeature.slice(0, 3);
+    console.log('✅ Role 2,3,4 - Manager/Lead, showing:', menuByFeature.slice(0, 4));
+    return menuByFeature.slice(0, 4);
   } else if (roleID.value === 5) {
     console.log('✅ Role 5 - Admin, showing all features:', menuByFeature);
     return menuByFeature;
