@@ -113,28 +113,68 @@ public class LeaveRequestController {
         return ResponseEntity.ok(myRequests);
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getLeaveRequestById(@PathVariable Long id) {
+        Optional<Leave_Requests> leaveOpt = leaveRequestsRepository.findById(id);
+        if (leaveOpt.isPresent()) {
+            return ResponseEntity.ok(leaveOpt.get());
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
     @PatchMapping("/{id}")
-    public ResponseEntity<?> approveOrRejectRequest(@PathVariable Long id, @RequestBody ApproveRequestDTO dto) {
-        java.util.Optional<Leave_Requests> leaveOpt = leaveRequestsRepository.findById(id);
+    public ResponseEntity<?> updateLeaveRequestStatus(
+            @PathVariable Long id,
+            @RequestBody ApproveRequestDTO dto) {
+        Optional<Leave_Requests> leaveOpt = leaveRequestsRepository.findById(id);
         if (leaveOpt.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
         Leave_Requests leaveRequest = leaveOpt.get();
+
+        // Kiểm tra status hợp lệ
+        if (dto.status != null) {
+            String status = dto.status;
+            if (!status.equals("Inprogress") && !status.equals("Approved") && !status.equals("Rejected")) {
+                return ResponseEntity.badRequest().body("Invalid status value");
+            }
+            leaveRequest.setStatus(status);
+        }
+
+        // Cập nhật processed_by
         if (dto.processedById != null) {
-            java.util.Optional<Users> processedByOpt = userRepository.findById(dto.processedById);
+            Optional<Users> processedByOpt = userRepository.findById(dto.processedById);
             if (processedByOpt.isEmpty()) {
                 return ResponseEntity.badRequest().body("Processed by user not found");
             }
             leaveRequest.setProcessedBy(processedByOpt.get());
         }
-        if (dto.status != null) {
-            leaveRequest.setStatus(dto.status);
-        }
+
+        // Cập nhật processed_reason
         if (dto.processedReason != null) {
             leaveRequest.setProcessedReason(dto.processedReason);
         }
+
+        // Cập nhật updated_at
         leaveRequest.setUpdatedAt(new java.util.Date());
         Leave_Requests saved = leaveRequestsRepository.save(leaveRequest);
         return ResponseEntity.ok(saved);
+    }
+
+    @GetMapping("/filter-by-date")
+    public ResponseEntity<?> filterLeaveRequestsByDate(@RequestParam String start_date, @RequestParam String end_date) {
+        try {
+            java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd");
+            java.util.Date startDate = sdf.parse(start_date);
+            java.util.Date endDate = sdf.parse(end_date);
+            java.util.List<Leave_Requests> filtered = leaveRequestsRepository.findAll().stream()
+                .filter(lr -> lr.getStartDate() != null && lr.getEndDate() != null)
+                .filter(lr -> !lr.getStartDate().before(startDate) && !lr.getEndDate().after(endDate))
+                .toList();
+            return ResponseEntity.ok(filtered);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Invalid date format. Use yyyy-MM-dd");
+        }
     }
 }

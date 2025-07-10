@@ -32,5 +32,10 @@ export default <RouterConfig>{
             path: '/leave-request/:id',
             component: () => import('~/pages/LeaveRequest/[id].vue'),
         },
+        {
+            name: 'agenda',
+            path: '/agenda',
+            component: () => import('~/pages/Agenda/Agenda.vue'),
+        },
     ]
 };
