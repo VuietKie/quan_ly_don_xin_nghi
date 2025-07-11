@@ -135,7 +135,8 @@ public class UserController {
         if (userOpt.isPresent()) {
             Users user = userOpt.get();
             String role = user.getRole().getRoleName();
-            String token = jwtUtil.generateToken(user.getUsername(), role, String.valueOf(user.getUserId()));
+            Long roleId = user.getRole() != null ? user.getRole().getRoleId() : null;
+            String token = jwtUtil.generateToken(user.getUsername(), role, String.valueOf(user.getUserId()), roleId);
 
             // Tạo cookie chứa token
             ResponseCookie cookie = ResponseCookie.from("token", token)
@@ -148,7 +149,7 @@ public class UserController {
 
             return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, cookie.toString())
-                .body(new LoginResponse(token, role, user.getUsername()));
+                .body(new LoginResponse(token, role, user.getUsername(), roleId));
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
         }
