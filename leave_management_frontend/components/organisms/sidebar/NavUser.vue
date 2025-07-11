@@ -1,62 +1,23 @@
 <template>
   <SidebarMenu>
     <SidebarMenuItem>
-      <DropdownMenu>
-        <DropdownMenuTrigger as-child>
-          <SidebarMenuButton
-            size="lg"
-            class="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
-          >
-            <Avatar class="h-8 w-8 rounded-lg">
-              <AvatarImage src="/avatars/vietnam.png" alt="Ảnh đại diện" />
-              <AvatarFallback class="rounded-lg">CN</AvatarFallback>
-            </Avatar>
-            <div class="grid flex-1 text-left text-sm leading-tight">
-              <span class="truncate font-medium">{{ displayName }}</span>
-              <span class="truncate text-xs text-muted-foreground">{{ roleLabel }}</span>
-            </div>
-            <ChevronsUpDown class="ml-auto size-4" />
-          </SidebarMenuButton>
-        </DropdownMenuTrigger>
-
-        <DropdownMenuContent
-          class="w-[--reka-dropdown-menu-trigger-width] min-w-56 rounded-lg"
-          :side="isMobile ? 'bottom' : 'right'"
-          align="end"
-          :side-offset="4"
+      <SidebarMenuButton size="lg" class="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground w-full">
+        <Avatar class="h-8 w-8 rounded-lg">
+          <AvatarImage src="/avatars/vietnam.png" alt="Ảnh đại diện" />
+          <AvatarFallback class="rounded-lg">CN</AvatarFallback>
+        </Avatar>
+        <div class="flex-1 grid text-left text-sm leading-tight">
+          <span class="truncate font-medium">{{ displayName }}</span>
+          <span class="truncate text-xs text-muted-foreground">{{ roleLabel }}</span>
+        </div>
+        <button
+          @click.stop="logout"
+          class="ml-auto flex items-center justify-center p-1 rounded-full transition-colors hover:bg-red-100 group"
+          style="height: 32px; width: 32px;"
         >
-          <DropdownMenuLabel class="p-0 font-normal">
-            <div class="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-              <Avatar class="h-8 w-8 rounded-lg">
-                <AvatarImage src="/avatars/vietnam.png" alt="Ảnh đại diện" />
-                <AvatarFallback class="rounded-lg">CN</AvatarFallback>
-              </Avatar>
-              <div class="grid flex-1 text-left text-sm leading-tight">
-                <span class="truncate font-semibold">{{ displayName }}</span>
-                <span class="truncate text-xs text-muted-foreground">{{ roleLabel }}</span>
-              </div>
-            </div>
-          </DropdownMenuLabel>
-
-          <DropdownMenuSeparator />
-
-          <DropdownMenuGroup>
-            <NuxtLink to="/profile">
-              <DropdownMenuItem>
-                <UserRound />
-                Tài khoản
-              </DropdownMenuItem>
-            </NuxtLink>
-          </DropdownMenuGroup>
-
-          <DropdownMenuSeparator />
-
-          <DropdownMenuItem @click="logout">
-            <LogOut />
-            Đăng xuất
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
+          <LogOut class="text-red-500 group-hover:text-red-700 transition-colors" />
+        </button>
+      </SidebarMenuButton>
     </SidebarMenuItem>
   </SidebarMenu>
 </template>

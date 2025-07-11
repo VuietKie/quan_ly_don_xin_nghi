@@ -50,6 +50,20 @@
                 <option v-for="role in roles" :key="role.roleId" :value="role.roleId">{{ role.roleName }}</option>
               </select>
             </div>
+            <div>
+              <label class="block mb-1 font-semibold text-gray-700">Phòng ban</label>
+              <select v-model="form.departmentId" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none text-gray-700">
+                <option value="" disabled>Chọn phòng ban...</option>
+                <option v-for="dept in departments" :key="dept.departmentId" :value="dept.departmentId">{{ dept.departmentName }}</option>
+              </select>
+            </div>
+            <div>
+              <label class="block mb-1 font-semibold text-gray-700">Quản lý</label>
+              <select v-model="form.managerId" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none text-gray-700">
+                <option value="">Không có</option>
+                <option v-for="u in users" :key="u.userId" :value="u.userId">{{ u.fullName }} ({{ u.username }})</option>
+              </select>
+            </div>
             <div class="flex flex-col gap-2 sm:flex-row sm:justify-end mt-6">
               <button type="submit" class="w-full sm:w-60 py-3 bg-blue-500 hover:bg-blue-600 text-white font-bold rounded-lg shadow-md transition">Lưu thay đổi</button>
               <button type="button" @click="goBack" class="w-full sm:w-60 py-3 bg-red-500 hover:bg-red-600 text-white font-bold rounded-lg shadow-md transition">Thoát</button>
@@ -82,12 +96,16 @@ const toast = useToast()
 
 const loading = ref(true)
 const roles = ref<any[]>([])
+const departments = ref<any[]>([])
+const users = ref<any[]>([])
 const form = ref({
   username: '',
   fullName: '',
   email: '',
   password: '',
-  roleId: ''
+  roleId: '',
+  departmentId: '',
+  managerId: ''
 })
 
 async function fetchUser() {
@@ -101,7 +119,9 @@ async function fetchUser() {
       fullName: res.fullName || '',
       email: res.email || '',
       password: '',
-      roleId: res.role?.roleId || ''
+      roleId: res.roleId || res.role?.roleId || '',
+      departmentId: res.departmentId || res.department?.departmentId || '',
+      managerId: res.managerId || res.manager?.userId || ''
     }
   } catch (e) {
     toast.error('Không thể tải thông tin người dùng!')
@@ -122,9 +142,33 @@ async function fetchRoles() {
   }
 }
 
+async function fetchDepartments() {
+  try {
+    const res = await $fetch<any[]>(`${config.public.apiBase}/departments/all`, {
+      headers: { Authorization: `Bearer ${token.value}` },
+    })
+    departments.value = res
+  } catch (e) {
+    toast.error('Không thể tải danh sách phòng ban!')
+  }
+}
+
+async function fetchUsers() {
+  try {
+    const res = await $fetch<any[]>(`${config.public.apiBase}/auth/all`, {
+      headers: { Authorization: `Bearer ${token.value}` },
+    })
+    users.value = res
+  } catch (e) {
+    users.value = []
+  }
+}
+
 onMounted(() => {
   fetchUser()
   fetchRoles()
+  fetchDepartments()
+  fetchUsers()
 })
 
 async function submitForm() {
@@ -132,7 +176,9 @@ async function submitForm() {
     const body: any = {
       fullName: form.value.fullName,
       email: form.value.email,
-      role: { roleId: form.value.roleId }
+      role: { roleId: form.value.roleId },
+      department: { departmentId: form.value.departmentId },
+      manager: form.value.managerId ? { userId: form.value.managerId } : null
     }
     if (form.value.password) {
       body.password = form.value.password

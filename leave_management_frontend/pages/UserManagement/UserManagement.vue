@@ -65,7 +65,9 @@ const headers = [
   { text: 'Tên đăng nhập', value: 'username' },
   { text: 'Họ tên', value: 'fullName' },
   { text: 'Email', value: 'email' },
-  { text: 'Role', value: 'roleName' },
+  { text: 'Vai trò', value: 'roleName' },
+  { text: 'Phòng ban', value: 'departmentName' },
+  { text: 'Quản lý', value: 'managerName' },
   { text: 'Actions', value: 'actions', sortable: false },
 ]
 
@@ -75,9 +77,10 @@ async function fetchUsers() {
     const res = await $fetch<any[]>(`${config.public.apiBase}/auth/all`, {
       headers: { Authorization: `Bearer ${token.value}` },
     })
+    const userMap = new Map(res.map(u => [u.userId, u.fullName]))
     users.value = res.map(u => ({
       ...u,
-      roleName: u.role?.roleName || '',
+      managerName: u.managerId ? (userMap.get(u.managerId) || u.managerId) : ''
     }))
   } catch (e) {
     users.value = []

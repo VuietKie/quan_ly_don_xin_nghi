@@ -8,15 +8,15 @@
           <a href="/">
             <Avatar class="h-8 w-8 rounded-lg">
               
-              <AvatarImage src="/images/icon_food.png" alt="Logo" />
+              <AvatarImage src="/images/bag.svg" alt="Logo" />
               
               <AvatarFallback class="rounded-lg">
                 CN
               </AvatarFallback>
             </Avatar>
             <div class="grid flex-1 text-left text-sm leading-tight">
-              <span class="truncate font-medium">EATSNDRINKS</span>
-              <span class="truncate text-xs">Trang Admin</span>
+              <span class="truncate font-medium">LEAVE MANAGEMENT</span>
+              <span class="truncate text-xs">Trang Quản Lý</span>
             </div>
           </a>
         </SidebarMenuButton>

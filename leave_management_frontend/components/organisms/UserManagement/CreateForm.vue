@@ -29,6 +29,17 @@
             <option v-for="role in roles" :key="role.roleId" :value="role.roleId">{{ role.roleName }}</option>
           </select>
         </div>
+        <div>
+          <label class="block mb-1 font-semibold text-gray-700">Phòng ban (department_id)</label>
+          <select v-model="form.department_id" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none text-gray-700">
+            <option value="" disabled>Chọn phòng ban...</option>
+            <option v-for="dept in departments" :key="dept.departmentId" :value="dept.departmentId">{{ dept.departmentName }}</option>
+          </select>
+        </div>
+        <div>
+          <label class="block mb-1 font-semibold text-gray-700">Quản lý (manager_id)</label>
+          <input v-model="form.manager_id" type="text" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none text-gray-700" placeholder="ID quản lý (nếu có)" />
+        </div>
         <div class="flex justify-end gap-2 mt-6">
           <button type="button" class="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold" @click="$emit('close')">Thoát</button>
           <button type="submit" class="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold">Thêm</button>
@@ -49,12 +60,15 @@ const token = useCookie('access_token')
 const toast = useToast()
 
 const roles = ref<any[]>([])
+const departments = ref<any[]>([])
 const form = ref({
   username: '',
   password: '',
   fullName: '',
   email: '',
-  roleId: ''
+  roleId: '',
+  department_id: '', // Thêm trường này
+  manager_id: ''     // Thêm trường này
 })
 
 async function fetchRoles() {
@@ -68,7 +82,22 @@ async function fetchRoles() {
   }
 }
 
-onMounted(fetchRoles)
+async function fetchDepartments() {
+  try {
+    const res = await $fetch<any[]>(`${config.public.apiBase}/departments/all`, {
+      headers: { Authorization: `Bearer ${token.value}` },
+    })
+    console.log('Departments fetched:', res)
+    departments.value = res
+  } catch (e) {
+    toast.error('Không thể tải danh sách phòng ban!')
+  }
+}
+
+onMounted(() => {
+  fetchRoles()
+  fetchDepartments()
+})
 
 async function handleSubmit() {
   if (!form.value.username || !form.value.password || !form.value.fullName || !form.value.roleId) {
@@ -76,16 +105,23 @@ async function handleSubmit() {
     return
   }
   try {
+    const body = {
+      username: form.value.username,
+      password: form.value.password,
+      fullName: form.value.fullName,
+      email: form.value.email,
+      role: { roleId: form.value.roleId },
+      department: { departmentId: form.value.department_id },
+      ...(form.value.manager_id ? { manager: { userId: form.value.manager_id } } : {})
+    }
+    console.log('Body gửi lên:', body)
     await $fetch(`${config.public.apiBase}/auth/add`, {
       method: 'POST',
-      headers: { Authorization: `Bearer ${token.value}` },
-      body: {
-        username: form.value.username,
-        password: form.value.password,
-        fullName: form.value.fullName,
-        email: form.value.email,
-        role: { roleId: form.value.roleId }
+      headers: {
+        Authorization: `Bearer ${token.value}`,
+        'Content-Type': 'application/json'
       },
+      body
     })
     toast.success('Thêm người dùng thành công!')
     emit('created')

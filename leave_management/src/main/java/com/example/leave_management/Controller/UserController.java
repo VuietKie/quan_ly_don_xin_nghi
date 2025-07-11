@@ -42,9 +42,34 @@ public class UserController {
     @Autowired
     private RoleFeaturesRepository roleFeaturesRepository;
 
+    // DTO cho user trả về
+    public static class UserDTO {
+        public Long userId;
+        public String username;
+        public String fullName;
+        public String email;
+        public Long departmentId;
+        public String departmentName;
+        public Long roleId;
+        public String roleName;
+        public Long managerId;
+
+        public UserDTO(Users user) {
+            this.userId = user.getUserId();
+            this.username = user.getUsername();
+            this.fullName = user.getFullName();
+            this.email = user.getEmail();
+            this.departmentId = user.getDepartment() != null ? user.getDepartment().getDepartmentId() : null;
+            this.departmentName = user.getDepartment() != null ? user.getDepartment().getDepartmentName() : null;
+            this.roleId = user.getRole() != null ? user.getRole().getRoleId() : null;
+            this.roleName = user.getRole() != null ? user.getRole().getRoleName() : null;
+            this.managerId = user.getManager() != null ? user.getManager().getUserId() : null;
+        }
+    }
+
     @GetMapping("/all")
-    public ResponseEntity<List<Users>> getAllUsers() {
-        List<Users> users = userRepository.findAll();
+    public ResponseEntity<List<UserDTO>> getAllUsers() {
+        List<UserDTO> users = userRepository.findAll().stream().map(UserDTO::new).toList();
         return ResponseEntity.ok(users);
     }
 
@@ -54,7 +79,7 @@ public class UserController {
         if (userOpt.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(userOpt.get());
+        return ResponseEntity.ok(new UserDTO(userOpt.get()));
     }
 
     @PostMapping("/add")

@@ -86,8 +86,7 @@ onMounted(async () => {
         'Employee': 1,
         'Manager': 2,
         'Department Manager': 3,
-        'Director': 4,
-        'admin': 5
+        'admin': 4,
       };
       const roleString = payload.role || payload.roleId || payload.roleID || payload.role_id;
       roleID.value = roleMapping[roleString] || null;
