@@ -42,7 +42,7 @@
               <td v-for="date in dateColumns" :key="date" class="px-2 py-2 text-center border-r border-gray-100">
                 <template v-if="isWeekend(date)">
                   <div class="rounded-lg bg-blue-100 text-blue-700 font-semibold py-1 cursor-pointer group relative" :title="'Nghỉ cuối tuần'">
-                    Nghỉ + Cuối tuần
+                    Nghỉ cuối tuần
                     <span class="absolute left-1/2 -translate-x-1/2 bottom-full mb-1 w-max max-w-xs bg-white text-xs text-gray-700 border border-gray-300 rounded shadow-lg px-2 py-1 opacity-0 group-hover:opacity-100 pointer-events-none z-10">Nghỉ cuối tuần</span>
                   </div>
                 </template>
@@ -51,7 +51,7 @@
                     class="rounded-lg bg-red-100 text-red-700 font-semibold flex flex-col items-center justify-center py-1 px-1 cursor-pointer group relative"
                     :title="getLeaveReasonForDate(row.requests, date)"
                   >
-                    Nghỉ +
+                    Nghỉ
                     <span v-if="getLeaveStatusForDate(row.requests, date) === 'Approved'" class="text-green-600 font-semibold">Duyệt</span>
                     <span v-else-if="getLeaveStatusForDate(row.requests, date) === 'Inprogress'" class="text-yellow-600 font-semibold">Chưa duyệt</span>
                     <span v-else class="text-red-600 font-semibold">Không duyệt</span>

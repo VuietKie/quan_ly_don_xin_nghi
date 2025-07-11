@@ -1,5 +1,6 @@
 package com.example.leave_management.Entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.IdClass;
@@ -26,4 +27,7 @@ public class Role_Features {
     @ManyToOne
     @JoinColumn(name = "feature_id", nullable = false)
     private Features feature;
+
+    @Column(name = "is_active", nullable = false)
+    private boolean isActive;
 } 

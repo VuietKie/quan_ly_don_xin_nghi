@@ -37,11 +37,11 @@ export default defineNuxtConfig({
         head: {
           charset: 'utf-8',
           viewport: 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no',
-          title: 'EATSNDRINKS ADMIN',
-          meta: [{ name: 'description', content: 'eatsndrinks.vn' }],
+          title: 'LEAVE MANAGEMENT',
+          meta: [{ name: 'description', content: 'leavemanagement.vn' }],
           noscript: [],
           bodyAttrs: {
-            id: 'eatsndrinks',
+            id: 'leavemanagement',
           },
         },
       },

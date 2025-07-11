@@ -12,7 +12,7 @@
           </BreadcrumbItem>
           <BreadcrumbSeparator class="hidden md:block" />
           <BreadcrumbItem>
-            <BreadcrumbPage>Chỉnh sửa đơn xin nghỉ</BreadcrumbPage>
+            <BreadcrumbPage>{{ canEdit ? 'Duyệt đơn' : 'Xem lại đơn' }}</BreadcrumbPage>
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
@@ -41,11 +41,23 @@
             </div>
             <div>
               <label class="block mb-1 font-semibold text-gray-700">Trạng thái</label>
-              <select v-model="form.status" :disabled="!canEdit" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none text-gray-700">
-                <option value="Inprogress">Chờ duyệt</option>
-                <option value="Approved">Đã duyệt</option>
-                <option value="Rejected">Từ chối</option>
-              </select>
+              <template v-if="canEdit">
+                <select v-model="form.status" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none text-gray-700">
+                  <option value="Inprogress">Chờ duyệt</option>
+                  <option value="Approved">Đã duyệt</option>
+                  <option value="Rejected">Từ chối</option>
+                </select>
+              </template>
+              <template v-else>
+                <div class="w-full px-4 py-2 border border-gray-200 rounded-lg bg-gray-50 text-gray-700">
+                  {{
+                    form.status === 'Inprogress' ? 'Chờ duyệt' :
+                    form.status === 'Approved' ? 'Đã duyệt' :
+                    form.status === 'Rejected' ? 'Từ chối' :
+                    form.status
+                  }}
+                </div>
+              </template>
             </div>
             <div v-if="form.status !== 'Inprogress'">
               <label class="block mb-1 font-semibold text-gray-700">Lý do xử lý (nếu từ chối)</label>
@@ -58,7 +70,7 @@
                 </div>
               </template>
             </div>
-            <div class="flex flex-col gap-2 sm:flex-row sm:justify-end mt-6">
+            <div :class="canEdit ? 'flex flex-col gap-2 sm:flex-row sm:justify-end mt-6' : 'flex justify-center mt-6'">
               <button v-if="canEdit" type="submit" class="w-full sm:w-60 py-3 bg-blue-500 hover:bg-blue-600 text-white font-bold rounded-lg shadow-md transition">Lưu thay đổi</button>
               <button type="button" @click="goBack" class="w-full sm:w-60 py-3 bg-red-500 hover:bg-red-600 text-white font-bold rounded-lg shadow-md transition">Thoát</button>
             </div>

@@ -66,6 +66,22 @@ const submitForm = () => {
     alert('Không xác định được user!')
     return
   }
+  const today = new Date();
+  today.setHours(0,0,0,0);
+  const start = new Date(form.value.start_date);
+  const end = new Date(form.value.end_date);
+  if (start < today) {
+    alert('Ngày bắt đầu không được ở quá khứ!');
+    return;
+  }
+  if (end < today) {
+    alert('Ngày kết thúc không được ở quá khứ!');
+    return;
+  }
+  if (end < start) {
+    alert('Ngày kết thúc phải sau hoặc bằng ngày bắt đầu!');
+    return;
+  }
   const payload = {
     userId: userId.value,
     startDate: form.value.start_date,

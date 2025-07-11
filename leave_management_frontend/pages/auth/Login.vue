@@ -1,5 +1,7 @@
 <template>
-  <LoginForm @login="handleLogin" />
+  <div class="flex items-center justify-center min-h-screen bg-gray-50">
+    <LoginForm @login="handleLogin" />
+  </div>
 </template>
 
 <script lang="ts" setup>
@@ -40,7 +42,7 @@ const handleLogin = async ({ username, password }: { username: string; password:
   loading.value = true;
   try {
     // 1. Kiểm tra username, password bằng phương thức GET
-    const userRes = await $fetch<User>(`${config.public.apiBase}/auth/user`, {
+    const userRes = await $fetch<User>(`${config.public.apiBase}/auth/all`, {
       method: "GET",
       params: { username, password },
     });

@@ -37,5 +37,30 @@ export default <RouterConfig>{
             path: '/agenda',
             component: () => import('~/pages/Agenda/Agenda.vue'),
         },
-    ]
+        {
+            name: 'permissions',
+            path: '/permissions',
+            component: () => import('~/pages/Permission/Permission.vue'),
+        },
+        {
+            name: 'permission-create',
+            path: '/permission/create',
+            component: () => import('~/pages/Permission/Create.vue'),
+        },
+        {
+            name: 'user-management',
+            path: '/user-management',
+            component: () => import('~/pages/UserManagement/UserManagement.vue'),
+        },
+        {
+            name: 'user-management-edit',
+            path: '/user-management/edit/:id',
+            component: () => import('~/pages/UserManagement/[id].vue'),
+        },
+        {
+            name: 'user-management-create',
+            path: '/user-management/create',
+            component: () => import('~/pages/UserManagement/Create.vue'),
+        },
+    ]       
 };

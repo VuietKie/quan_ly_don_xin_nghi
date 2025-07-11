@@ -10,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -40,10 +42,64 @@ public class UserController {
     @Autowired
     private RoleFeaturesRepository roleFeaturesRepository;
 
-    @GetMapping("/user")
+    @GetMapping("/all")
     public ResponseEntity<List<Users>> getAllUsers() {
         List<Users> users = userRepository.findAll();
         return ResponseEntity.ok(users);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getUserById(@PathVariable Long id) {
+        Optional<Users> userOpt = userRepository.findById(id);
+        if (userOpt.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(userOpt.get());
+    }
+
+    @PostMapping("/add")
+    public ResponseEntity<?> addUser(@RequestBody Users user) {
+        if (user.getUsername() == null || user.getUsername().isEmpty() ||
+            user.getPassword() == null || user.getPassword().isEmpty() ||
+            user.getFullName() == null || user.getFullName().isEmpty() ||
+            user.getRole() == null) {
+            return ResponseEntity.badRequest().body("Missing required fields");
+        }
+        // Kiểm tra trùng username
+        if (userRepository.findAll().stream().anyMatch(u -> u.getUsername().equals(user.getUsername()))) {
+            return ResponseEntity.badRequest().body("Username already exists");
+        }
+        Users saved = userRepository.save(user);
+        return ResponseEntity.ok(saved);
+    }
+
+    @PatchMapping("/update/{id}")
+    public ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody Users update) {
+        Optional<Users> userOpt = userRepository.findById(id);
+        if (userOpt.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        Users user = userOpt.get();
+        if (update.getFullName() != null && !update.getFullName().isEmpty()) {
+            user.setFullName(update.getFullName());
+        }
+        if (update.getPassword() != null && !update.getPassword().isEmpty()) {
+            user.setPassword(update.getPassword());
+        }
+        if (update.getEmail() != null && !update.getEmail().isEmpty()) {
+            user.setEmail(update.getEmail());
+        }
+        if (update.getRole() != null) {
+            user.setRole(update.getRole());
+        }
+        if (update.getDepartment() != null) {
+            user.setDepartment(update.getDepartment());
+        }
+        if (update.getManager() != null) {
+            user.setManager(update.getManager());
+        }
+        Users saved = userRepository.save(user);
+        return ResponseEntity.ok(saved);
     }
 
     @PostMapping("/login")
