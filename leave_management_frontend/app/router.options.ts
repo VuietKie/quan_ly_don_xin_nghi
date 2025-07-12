@@ -79,5 +79,10 @@ export default <RouterConfig>{
             component: () => import('~/pages/UserManagement/Create.vue'),
             meta: { featureId: 6 }
         },
+        {
+            name: 'edit-proffile',
+            path: '/auth/edit',
+            component: () => import('~/pages/auth/Edit.vue'),
+        },
     ]       
 };

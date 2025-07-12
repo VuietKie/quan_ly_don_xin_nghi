@@ -7,19 +7,24 @@
             <BreadcrumbLink href="/">Trang chủ</BreadcrumbLink>
           </BreadcrumbItem>
           <BreadcrumbSeparator class="hidden md:block" />
+          <BreadcrumbItem class="hidden md:block">
+            <BreadcrumbLink href="/dashboard">Dashboard</BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator class="hidden md:block" />
           <BreadcrumbItem>
-            <BreadcrumbPage>Trang dashboard</BreadcrumbPage>
+            <BreadcrumbPage>Chỉnh sửa thông tin</BreadcrumbPage>
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
     </template>
+    
     <!-- Nội dung chính của trang -->
     <div class="flex flex-1 flex-col gap-4 p-4 pt-0">
-      <!-- Nội dung của bạn ở đây -->
-       <ProfileForm v-if="user" :user="user"/>
+      <Edit />
     </div>
   </MainTemplate>
 </template>
+
 <script lang="ts" setup>
 import MainTemplate from '~/components/layouts/MainTemplate.vue'
 import Breadcrumb from '@/components/ui/breadcrumb/Breadcrumb.vue'
@@ -28,36 +33,14 @@ import BreadcrumbItem from '@/components/ui/breadcrumb/BreadcrumbItem.vue'
 import BreadcrumbLink from '@/components/ui/breadcrumb/BreadcrumbLink.vue'
 import BreadcrumbSeparator from '@/components/ui/breadcrumb/BreadcrumbSeparator.vue'
 import BreadcrumbPage from '@/components/ui/breadcrumb/BreadcrumbPage.vue'
+import Edit from '~/components/organisms/auth/EditForm.vue'
 
-import ProfileForm from '~/components/organisms/auth/ProfileForm.vue'
-
-interface User {
-  first_name: string
-  last_name: string
-  username: string
-  phone_number: string
-  address: string
-}
-
-
-
-const user = ref<User | null>(null);
-const config = useRuntimeConfig();
-const token = useCookie('access_token');
-const fetchUserProfile = async () => {
-  try {
-    const data = await $fetch<User>(`${config.public.apiBase}/users/user/profile`, {headers: {
-                Authorization: `Bearer ${token.value}`
-            }});
-
-    if (data) {
-      user.value = data;
-    }
-  } catch (error) {
-    console.error("Lỗi khi lấy thông tin user:", error);
-  }
-};
-
-
-onMounted(fetchUserProfile);
+// Set page title
+useHead({
+  title: 'Chỉnh sửa thông tin cá nhân'
+})
 </script>
+
+<style>
+
+</style>

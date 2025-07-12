@@ -11,7 +11,7 @@ const featureUrlMap: Record<number, string> = {
   // Thêm các featureId khác nếu có
 }
 
-const PUBLIC_PATHS = ['/login', '/unauthorized', '/'] // Thêm các trang public
+const PUBLIC_PATHS = ['/login', '/unauthorized', '/', '/auth/edit'] // Thêm các trang public
 
 function parseJwt(token: string): any {
   try {
